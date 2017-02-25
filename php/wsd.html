@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>JQuery Ajax Test</title>
+<script src="//cdn.bootcss.com/echarts/3.4.0/echarts.min.js"></script>
+<script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>PHP Ajax ECahrts 测试</h1>
+    <hr>
+    <div id="container" style="width: 600px; height: 400px;"></div>
+    <script>
+
+    // 初始化两个数组，盛装从数据库中获取到的数据
+    var ids=[], wendus = [], shidus = [],times=[];
+
+    //调用ajax来实现异步的加载数据
+    function getusers() {
+        $.ajax({
+            type: "post",
+            async: false,
+            url: "getjson.php",
+            data: {},
+            dataType: "json",
+            success: function(result){
+                if(result){
+                    for(var i = 0 ; i < result.length; i++){
+                        ids.push(result[i].id);
+                        wendus.push(result[i].wendu);
+												shidus.push(result[i].shidu);
+												times.push(result[i].time);
+                    }
+                }
+            },
+            error: function(errmsg) {
+                alert("Ajax获取服务器数据出错了！"+ errmsg);
+            }
+        });
+    return ids,wendus,shidus;
+    }
+    // 执行异步请求
+    getusers();
+
+
+    // 初始化 图表对象
+        var mychart = echarts.init(document.getElementById("container"));
+        // 进行相关项的设置，也就是所谓的搭搭骨架，方便待会的ajax异步的数据填充
+        var option = {
+            title : {
+                text : '温度湿度图'
+            },
+            tooltip : {
+                show : true
+            },
+            toolbox: {
+            	show:true,
+            	feature:{
+            		dataview:{
+            			show:true
+            		},
+	            	restore:{
+	            		show:true
+            		},
+            		dataZoom:{}
+            		
+            	
+            	}
+            },
+            legend : {//图例
+                data : [ '温度','湿度' ]
+            },
+            xAxis : [ {
+                data : ids
+            } ],
+            yAxis : [ {
+                type : 'value'
+            } ],
+            series : [ {
+                "name" : "温度",
+                "type" : "line",
+                "data" : wendus,
+									markPoint:{
+									                	data:[
+									                		{type:'max',name:'最大值'},
+									                		{type:'min',name:'最小值'}
+									                	]
+									                }
+										            } , {
+										                "name" : "湿度",
+										                "type" : "line",
+										                "data" : shidus,
+										markPoint:{
+										                	data:[
+										                		{type:'max',name:'最大值'},
+										                		{type:'min',name:'最小值'}
+										                	]
+										                }
+            }]
+        };
+
+        // 将配置项赋给chart对象，来显示相关的数据
+        mychart.setOption(option);
+
+
+
+
+    </script>
+<marquee>确认可以到达这里啊</marquee>
+
+</body>
+</html>
